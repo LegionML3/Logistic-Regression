@@ -74,7 +74,7 @@ class LogisticRegression():
             current_loss = self.Loss(y, y_probs)
             self.loss_array.append(float(current_loss))
 
-            self.w, self.b = self.Gradient_Descent(X, y, y_probs, self.w, self.b)
+            self.w, self.b = self.Gradient_Descent(y, y_probs, self.w, self.b)
 
         return
 
@@ -88,10 +88,10 @@ class LogisticRegression():
         #BCEL function
         return np.where(y == 1, -np.log(y_probs + epsilon), -np.log(1 - y_probs + epsilon)).mean()
 
-    def Gradient_Descent(self, X, y, y_probs, w, b):
+    def Gradient_Descent(self, y, y_probs, w, b):
         error_vector = y_probs - y
 
-        dw = self.Scale(X).T @ error_vector / self.m
+        dw = self.X_scaled.T @ error_vector / self.m
         db = error_vector.sum() / self.m # divide by number of rows
 
         new_w = w - (self.lr * dw)
@@ -106,16 +106,16 @@ class LogisticRegression():
 np.random.seed(42)
 
 # Data
-iris = load_breast_cancer()
+cancer = load_breast_cancer()
 
 #feature data frame
-df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+df = pd.DataFrame(data=cancer.data, columns=cancer.feature_names)
 
 #feature matrix
 X = df.to_numpy()
 
 #array of true labels
-y = iris.target
+y = cancer.target
 
 #Model
 model = LogisticRegression(lr=0.01, epochs=1000)
